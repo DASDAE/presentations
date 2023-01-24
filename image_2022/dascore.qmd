@@ -28,9 +28,10 @@ Distributed Acoustic Sensing Data Analysis Ecosystem
 
 ::: columns
 ::: {.column width="40%"}
-- Collection of DFOS libraries and applications
+- Collection of open-source DFOS libraries and applications
 - Facilitate research and education
-- Flexible, easy to use and contribute to
+- Enable DFOS interoperability and fusion
+- Reduce code redundancy
 :::
 
 ::: {.column width="60%"}
@@ -558,8 +559,8 @@ chunked_spool = spool.chunk(
 ::: columns
 ::: {.column width="50%"}
 - Terra15
-- TDMS
-- Silixa HDF5
+- TDMS*
+- Silixa HDF5*
 - WAV
 - DASDAE
 
@@ -599,9 +600,6 @@ chunked_spool = spool.chunk(
 
 :::
 
-:::footer
-*planned or in progress
-:::
 
 ## Acknowledgements 
 

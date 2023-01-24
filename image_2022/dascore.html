@@ -7,7 +7,7 @@
 <link href="dascore_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="dascore_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="dascore_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.0.38">
+  <meta name="generator" content="quarto-1.1.163">
 
   <meta name="author" content="Derrick Chambers, Eileen Martin, Ge Jin">
   <title>DASCore</title>
@@ -19,10 +19,15 @@
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    span.underline{text-decoration: underline;}
-    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -401,9 +406,10 @@
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>Collection of DFOS libraries and applications</li>
+<li>Collection of open-source DFOS libraries and applications</li>
 <li>Facilitate research and education</li>
-<li>Flexible, easy to use and contribute to</li>
+<li>Enable DFOS interoperability and fusion</li>
+<li>Reduce code redundancy</li>
 </ul>
 </div><div class="column" style="width:60%;">
 <div class="quarto-figure quarto-figure-center">
@@ -591,7 +597,7 @@
 </div><div class="column" style="width:80%;">
 <div class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
-<p><img data-src="dascore_files/figure-revealjs/cell-2-output-1.png" width="757" height="419"></p>
+<p><img data-src="dascore_files/figure-revealjs/cell-2-output-1.png" width="757" height="420"></p>
 </div>
 </div>
 </div><div class="column" style="width:10%;">
@@ -648,7 +654,7 @@
 <p><br></p>
 <div class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
-<pre><code>{'d_distance': 1, 'd_time': numpy.timedelta64(4000000,'ns'), 'category': 'DAS', 'id': 'test_data1', 'time_min': numpy.datetime64('2017-09-18'), 'network': '', 'station': '', 'tag': 'random', 'time_max': numpy.datetime64('2017-09-18T00:00:07.996000000'), 'dims': 'distance,time', 'distance_units': 'm', 'data_units': '', 'distance_min': 0, 'history': [], 'data_type': 'DAS', 'time_units': 's', 'instrument_id': '', 'distance_max': 299}</code></pre>
+<pre><code>{'d_distance': 1, 'd_time': numpy.timedelta64(4000000,'ns'), 'category': 'DAS', 'id': 'test_data1', 'time_min': numpy.datetime64('2017-09-18'), 'network': '', 'station': '', 'tag': 'random', 'distance_min': 0, 'distance_units': 'm', 'dims': 'distance,time', 'distance_max': 299, 'time_units': 's', 'time_max': numpy.datetime64('2017-09-18T00:00:07.996000000'), 'instrument_id': '', 'history': [], 'data_type': 'DAS', 'data_units': ''}</code></pre>
 </div>
 </div>
 </section>
@@ -833,8 +839,8 @@
 <div class="column" style="width:50%;">
 <ul>
 <li>Terra15</li>
-<li>TDMS</li>
-<li>Silixa HDF5</li>
+<li>TDMS*</li>
+<li>Silixa HDF5*</li>
 <li>WAV</li>
 <li>DASDAE</li>
 </ul>
@@ -869,9 +875,6 @@
 <li>Testing with Ray/Dask</li>
 </ul>
 </div>
-</div>
-<div class="footer">
-<p>*planned or in progress</p>
 </div>
 </section>
 <section id="acknowledgements" class="slide level2">
@@ -1193,7 +1196,8 @@
       for (var i=0; i<noterefs.length; i++) {
         const ref = noterefs[i];
         tippyHover(ref, function() {
-          let href = ref.getAttribute('href');
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
           try { href = new URL(href).hash; } catch {}
           const id = href.replace(/^#\/?/, "");
           const note = window.document.getElementById(id);
