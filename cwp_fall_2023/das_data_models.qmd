@@ -186,7 +186,7 @@ Derrick
 ::: incremental
 
 - Versioning and time snapshots
-- Tracked provenance
+- Track provenance
 - Single source of truth
 - Version migrations
 - Plain-textable
@@ -213,12 +213,12 @@ Earthscope's [DAS-RCN metadata definition](https://github.com/DAS-RCN/DAS_metada
 <br>
 
 ::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
-StationXML [DAS-RCN metadata definition](https://github.com/DAS-RCN/DAS_metadata)
+[StationXML](https://www.fdsn.org/xml/station/)
 :::
 
 ::: incremental
 - Specific to point sensors (e.g., seismometers)
-- Doesn't required DAS information
+- Doesn't account for DAS information
 - XML
 :::
 
