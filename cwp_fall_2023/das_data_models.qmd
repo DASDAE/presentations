@@ -1,0 +1,423 @@
+---
+title: "DAS Data Modeling"
+subtitle: "CWP Seminar 2023"
+format:
+  revealjs: 
+    slide-number: true
+    preview-links: auto
+    logo: ../_static/images/logo.png
+    footer: <https://github.com/dasdae/dascore>
+    theme: [../_static/custom.scss]
+    standalone: true
+    embed-resources: true
+resources:
+  - dascore.pdf
+---
+
+
+## Distributed Acoustic Sensing
+
+<br>
+<br>
+
+:::{.r-stack}
+![](../_static/images/DAS_concept.png)
+:::
+
+
+## Background: DASDAE
+
+::: columns
+::: {.column width="40%"}
+- Collection of DFOS libraries and applications
+- Focus on research and education
+- Enable DFOS interoperability and fusion
+:::
+
+::: {.column width="60%"}
+![](../_static/images/dasdae_flow.png){fig-align="center" height="500"}
+:::
+:::
+
+
+## Background: DASCore
+
+::: {.r-stack}
+![](../_static/images/dasdae_flow_with_dascore.png){fig-align="center" height="550"}
+
+![](../_static/images/dasdae_flow.png){.fragment .fade-out fig-align="center" height="550"}
+
+
+
+:::
+
+
+## DASCore: Goals
+
+</br>
+
+::: incremental
+- Common building block for future DASDAE codes
+- Provide reference processing implementations
+- Implement basic, customizable visualizations
+- Read/write common data formats
+- Manage data sets
+:::
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_1.png)
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_2.png)
+
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_3.png)
+
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_4.png)
+
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_5.png)
+
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_6.png)
+
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_7.png)
+
+## Data Structures
+
+![](../_static/images/patch_spool/patch_spool_8.png)
+
+
+
+## Motivation
+
+
+::: incremental
+
+::: {style="font-size: 1.3em; text-align: center; presentation-line-height: 1.0"}
+- `Patch` and `Spool` model data
+  - Processing, data interfaces, partial metadata
+- How to model "full" metadata? 
+- Simply mirror a standard?
+- Which standard?
+:::
+
+:::
+
+
+## Motivation
+
+
+::: {.r-stack}
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+DAS RCN consensus:
+
+"No standard data and metadata format exists"
+:::
+
+::: {style="font-size: 1.1em; text-align: center; presentation-line-height: 1.0"}
+<br>
+<br>
+<br>
+<br>
+<br>
+\- [Jerry Carter (director of data services, Earthscope)](https://www.youtube.com/watch?v=aLuM6vfvreQ)
+
+:::
+
+:::
+
+
+## Motivation
+
+<br>
+
+::: {.r-stack}
+![](../_static/images/standards.png){width=8in}
+
+:::
+
+::: footer
+https://xkcd.com/927/
+:::
+
+
+## Requirements
+
+<br>
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+Earthscope
+:::
+
+
+::: incremental
+
+- Common technology
+- Data can be managed separate from metadata
+- Applicable to many geophysical monitoring scenarios
+
+:::
+
+## Requirements
+
+<br>
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+Derrick
+:::
+
+::: incremental
+
+- Versioning and time snapshots
+- Track provenance
+- Single source of truth
+- Version migrations
+- Plain-textable
+
+:::
+
+## Existing Standards
+
+<br>
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+Earthscope's [DAS-RCN metadata definition](https://github.com/DAS-RCN/DAS_metadata)
+:::
+
+::: incremental
+- Useful; many concepts outlined
+- Incomplete, possibly abandoned?
+- Definition not implementation
+:::
+
+
+## Existing Standards
+
+<br>
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+[StationXML](https://www.fdsn.org/xml/station/)
+:::
+
+::: incremental
+- Specific to point sensors (e.g., seismometers)
+- Doesn't account for DAS information
+- XML
+:::
+
+
+## Existing Standards
+
+<br>
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+[ProdML](https://www.energistics.org/prodml-data-standards)
+:::
+
+::: incremental
+- Excellent coverage of DFOS concepts 
+- Focused on oil/gas
+- Stores data/metadata together
+- Not clear how well requirements are met
+:::
+
+
+## Existing Standards
+
+<br>
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+[SEGY](https://subsurfwiki.org/wiki/SEG-Y_file_format)
+:::
+
+::: incremental
+- Binary parsing nightmare (extended headers)
+- Stores data/metadata together
+- Not good
+:::
+
+
+## Existing Standards
+
+<br>
+<br>
+<br>
+
+::: {style="font-size: 1.4em; text-align: center; presentation-line-height: 1.0"}
+Others?
+:::
+
+
+
+## Implementation: Approach
+
+::: incremental
+- Use [Pydantic](https://docs.pydantic.dev/latest/) 
+  - schema creation
+  - serialization
+  - validation
+- Try to capture RCN metadata concepts
+- Use ProdML terminology 
+- Focus on flexibility: we are going to get this wrong
+- Build prototype, solicit feedback
+:::
+
+
+## Implementation: `Base` {auto-animate="true"}
+
+<br>
+
+```{.python code-line-numbers="|2|3|4|5|6|7"}
+class Base:
+  resource_id: str
+  creation_time: datetime
+  author_id: str
+  notes: str
+  version: int = 1
+  schema_version: int = 1
+```
+
+
+## Implementation: `Base` {auto-animate="true"}
+
+<br>
+
+```{.python code-line-numbers="7-11"}
+class Base:
+  resource_id: str
+  creation_time: datetime
+  author_id: str
+  notes: str
+  version: int = 1
+  schema_version: int = 1
+  
+  @migration(1, 2)
+  def migration(self, ...):
+      ...
+```
+
+## Implementation: `Acquisition` {auto-animate="true"}
+
+`Acquisition` extends `attrs` and `coords` of a `Patch`
+
+:::{.fragment}
+
+```{.python code-line-numbers="|2|3|9|11"}
+class Acquisition(Base):
+  instrument_configuration_id: str
+  cable_segment_id: str
+  data_units: str
+  start_time: datetime
+  end_time: datetime
+  network: str
+  station: str
+  dims: str
+  tag: str
+  history_id: str
+```
+
+:::
+
+## Implementation: `Inventory` {auto-animate="true"}
+
+<br>
+
+::: incremental
+- Contains all `Base` objects
+- Indices for object type
+- Updates occur on *exactly* one object
+- Stores history
+- Can be restored to specific time
+:::
+
+
+## Implementation: `Inventory` {auto-animate="true"}
+
+<br>
+
+```{.python code-line-numbers="|2"}
+class Inventory(Base):
+  contents: dict = {resource_id: [object, ...]}
+  classes: dict = {class_name: [resource_id, ...]} 
+```
+
+::: incremental
+- Objects are immutable
+- Each resource_id can have multiple objects
+- Updated objects are appended to resource_id list
+- Last items in list are "current"
+- Can rewind time
+:::
+
+
+## Implementation: `Inventory` {auto-animate="true"}
+
+<br>
+
+```{.python code-line-numbers="3"}
+class Inventory(Base):
+  contents: dict = {resource_id: [object, ...]}
+  classes: dict = {class_name: [resource_id, ...]} 
+```
+
+:::{.fragment} 
+- Allows efficient lookup and iteration by type
+:::
+
+
+
+## Implementation: `CableSegment` {auto-animate="true"}
+
+<br>
+
+```{.python code-line-numbers="|4|5|6|7-12"}
+class CableSegment(Base):
+  length: float
+  length_units: str
+  cable_id: str
+  environment_id: str
+  orientation_id: str
+  contents: list = [
+    segment_id, 
+    splice_id, 
+    termination_id, 
+    connector_id,
+  ] 
+```
+
+
+## Implementation: What's Wrong? {auto-animate="true"}
+
+:::{.r-stack}
+
+![](../_static/images/change_my_mind.png){width=600}
+
+:::
+
+
+## Focus Groups
+
+<br>
+
+- Down hole exploration
+- Streamers
+- Hydro/Cryosphere
+- Urban/Industrial
+
+

@@ -1,0 +1,643 @@
+---
+title: "DASCore"
+subtitle: "A Python Library for Distributed Acoustic Sensing"
+format:
+  revealjs: 
+    slide-number: true
+    preview-links: auto
+    logo: ../_static/images/logo.png
+    footer: <https://github.com/dasdae/dascore>
+    theme: [../_static/custom.scss]
+    author: Derrick Chambers, Eileen Martin, Ge Jin
+    standalone: true
+    embed-resources: true
+resources:
+  - dascore.pdf
+---
+
+
+## DASDAE
+
+![](../_static/images/dasdae.png)
+
+Distributed Acoustic Sensing Data Analysis Ecosystem 
+
+
+## DASDAE: Goals
+
+::: columns
+::: {.column width="40%"}
+- Collection of open-source DFOS libraries and applications
+- Facilitate research and education
+- Enable DFOS interoperability and fusion
+- Reduce code redundancy
+:::
+
+::: {.column width="60%"}
+![](../_static/images/dasdae_flow.png){fig-align="center" height="500"}
+:::
+:::
+
+
+
+## DASDAE: People
+
+
+![](../_static/images/people/people_grid.png){fig-align="center" height="500"}
+
+
+
+## DASDAE: DASCore's Place
+
+::: {.r-stack}
+![](../_static/images/dasdae_flow_with_dascore.png){fig-align="center" height="550"}
+
+![](../_static/images/dasdae_flow.png){.fragment .fade-out fig-align="center" height="550"}
+
+
+
+:::
+
+
+## DASCore: Goals
+
+</br>
+
+::: incremental
+- Common building block for future DASDAE codes
+- Provide reference processing implementations
+- Implement basic, customizable visualizations
+- Read/write common data formats
+- Manage data sets
+:::
+
+
+
+## DASCore: Inspiration
+
+</br>
+
+::: {.r-stack}
+
+
+![](../_static/images/obspy/obspy_logo_full.svg){.fragment .fade-in-then-out fig-align="center" top=50 right=50 height="380" .r-stretch}
+
+
+::: {.fragment}
+
+- Nearly 1.8 million downloads
+- Used by ~700 repos (128 packages)
+- 97 unique contributors
+- 1,600 academic citations
+:::
+
+:::
+
+
+
+
+## DASCore: Non-Goals
+</br>
+What DASCore is not:
+</br>
+
+::: incremental
+- Application for a particular use case
+- Graphical User Interface
+- Machine-learning library
+- Massively parallel framework
+:::
+
+
+## DASCore: Installation
+
+</br>
+</br>
+conda
+```bash
+conda install dascore -c conda-forge
+```
+
+</br>
+pip
+```bash
+pip install dascore
+```
+
+
+## DASCore: Data Structures
+
+</br>
+
+![](../_static/images/data_structure.svg)
+
+
+::: columns
+
+::: {.column width="50%"}
+
+::: {style="font-size: 1.8em; color: blue; text-align: center"}
+Patch
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {style="font-size: 1.8em; color: red; text-align: center"}
+Spool
+:::
+
+:::
+
+:::
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+
+::: {style="font-size: 1.2em;"}
+[Patch]{style="color: blue"}: Contiguous data and metadata
+:::
+
+::: incremental
+
+::: {style="font-size: 1.0em; text-align: center; presentation-line-height: 1.0"}
+- Contains three types of metadata
+    - `dims` - dimension labels
+    - `coords` - dimension values
+    - `attrs` - scalar metadata
+- Maintains metadata consistency
+- *Strives* to be immutable
+
+    
+:::
+
+:::
+
+::: footer
+Patch design inspired by [Xarray](https://docs.xarray.dev/en/stable/)
+:::
+
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* We start by importing dascore
+
+```python
+import dascore as dc
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* Then we read a DAS file
+
+```python
+import dascore as dc
+
+patch = dc.read('path_to_das_file.h5')[0]
+``` 
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* Or we can use one of the example patches
+
+```python
+import dascore as dc
+
+patch = dc.get_example_patch()
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* Processing methods are chained together
+
+``` {.python code-line-numbers="4-8|5|6|7"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+out = (
+    patch.decimate(time=8)
+    .detrend(dim='distance')
+    .pass_filter(time=(None, 10))
+)
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* Simple visualizations are accessed through .viz
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+patch.viz.waterfall(show=True)
+```
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+
+::: columns
+::: {.column width="10%"}
+:::
+
+::: {.column width="80%"}
+
+``` {python, echo=true}
+import dascore as dc
+patch = dc.get_example_patch()
+
+_ = patch.viz.waterfall(show=True)
+```
+:::
+
+::: {.column width="10%"}
+:::
+:::
+
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Accessing metadata: dimensions
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+print(patch.dims)
+```
+
+</br>
+
+``` {python, code-line-numbers="4", echo=true}
+import dascore as dc
+patch = dc.get_example_patch()
+
+print(patch.dims)
+```
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Accessing metadata: coordinates
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+print(patch.coords)
+```
+
+</br>
+
+``` {python, code-line-numbers="4", echo=true}
+import dascore as dc
+patch = dc.get_example_patch()
+
+print(patch.coords)
+```
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Accessing metadata: attributes
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+print(patch.attrs)
+```
+
+</br>
+
+``` {python, code-line-numbers="4", echo=true}
+import dascore as dc
+
+patch = dc.get_example_patch()
+
+print(dict(patch.attrs))
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Updating metadata
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+new = patch.update_attrs(time_min='2015-01-01T10')
+```
+
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Escape hatches: numpy arrays
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+array = patch.data
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Escape hatches: xarray DataArray
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+data_array = patch.to_xarray()
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+
+::: {style="font-size: 1.2em;"}
+[Spool]{style="color: red"}: Collection of [Patches]{style="color: blue"}
+:::
+
+::: incremental
+
+::: {style="font-size: 1.0em; text-align: center; presentation-line-height: 1.0"}
+
+- Encapsulates access to data sources
+    - In-memory (list of patches)
+    - On-disk (directory of files)
+    - Remote (data centers)*
+- Orchestrates batch processing
+- Operates lazily
+
+:::
+:::
+
+::: footer
+*not yet implemented
+:::
+    
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: A single file
+
+``` {.python code-line-numbers="3"}
+import dascore as dc
+
+spool = dc.spool('path_to_das_file.h5')
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: A collection of patches
+
+``` {.python code-line-numbers="3-4"}
+import dascore as dc
+
+patch_list = [dc.get_example_patch()]
+spool = dc.spool(patch_list)
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: A directory of DAS files
+
+``` {.python code-line-numbers="3"}
+import dascore as dc
+
+spool = dc.spool('das_directory').update()
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: DASCore's example data set
+
+``` {.python code-line-numbers="3"}
+import dascore as dc
+
+spool = dc.get_example_spool()
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Patches are accessed via indexing
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+patch = spool[0]
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* or via iteration
+
+``` {.python code-line-numbers="4-5"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+for patch in spool:
+  ...
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Sub-spools can be created with slices
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+sub_spool = spool[:2]
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* spools are filtered with `select`
+
+``` {.python code-line-numbers="4-7"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+filtered_spool = spool.select(
+  tag='experiment1',
+  time=(None, '2021-01-01'),
+  distance=(10, 100)
+)
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Data are chunked with `chunk`
+
+``` {.python code-line-numbers="4-7"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+chunked_spool = spool.chunk(
+  time=60,
+  overlap=10,
+)
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* `chunk` can also merge adjacent/overlapping data
+
+``` {.python code-line-numbers="4-6"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+chunked_spool = spool.chunk(
+  time=None,
+)
+```
+
+## DASCore: Supported Formats
+
+</br>
+
+::: columns
+::: {.column width="50%"}
+- Terra15
+- TDMS*
+- Silixa HDF5*
+- WAV
+- DASDAE
+
+:::
+::: {.column width="50%"}
+- SEGY*
+- APSensing*
+- Optasense*
+- Zarr*
+:::
+
+:::
+
+:::footer
+*planned or in progress
+:::
+
+
+## DASCore: Future Work
+
+</br>
+
+::: columns
+::: {.column width="50%"}
+- Remote data spool
+- Additional file formats
+- Finalizing metadata schema
+- DASDAE format improvements
+
+
+:::
+::: {.column width="50%"}
+- Performance improvements
+- Array interoperability (PyTorch, Jax, NumPy)​
+- Testing with Ray/Dask
+:::
+
+:::
+
+
+## Acknowledgements 
+
+:::{style="font-size: 0.7em"}
+
+- Colorado School of Mines ITS and CIARC
+
+- NSF Geoinformatics grant 2148614
+
+- DOE STTR grant DE-SC0022478, subcontract 7026-DOE-1T/MINES with Luna Innovations
+
+- NIOSH funding for Derrick Chambers PhD studies
+
+- AFRL Acknowledgement: "This material is based on research sponsored by Air Force Research Laboratory (AFRL) under agreement number FA9453-21-2-0018. The U.S. Government is authorized to reproduce and distribute reprints for Governmental purposes notwithstanding any copyright notation thereon."
+
+- AFRL Disclaimer: "The views and conclusions contained herein are those of the authors and should not be interpreted as necessarily representing the official policies or endorsements, either expressed or implied, of Air Force Research Laboratory (AFRL) or the U.S. Government."
+
+:::
+
+## DASCore: Final Note
+</br>
+
+::: columns
+
+::: {.column width="50%"}
+::: incremental
+
+- DASCore is very new
+- There will be:
+    - Bugs
+    - API improvements
+- You can help shape its future!
+
+:::
+:::
+
+::: {.column width="50%"}
+
+![](../_static/images/dascore_qr.png){.absolute top=120 right=20  width="500" height="500"}
+:::
+:::
+

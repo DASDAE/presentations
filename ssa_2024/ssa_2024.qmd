@@ -1,0 +1,746 @@
+---
+title: "DASCore"
+subtitle: "A Python Library for Distributed Acoustic Sensing"
+format:
+  revealjs: 
+    slide-number: true
+    preview-links: auto
+    footer: <https://github.com/dasdae/dascore>
+    theme: [../_static/custom.scss]
+    author: DASDAE developers
+    standalone: true
+    embed-resources: true
+resources:
+  - dascore.html
+  
+---
+
+
+## DASDAE
+
+<br>
+Distributed Acoustic Sensing Data Analysis Ecosystem 
+
+![](../_static/images/dasdae.png){.absolute top=210 left=0}
+
+
+## DASDAE
+
+<br>
+
+![](../_static/images/obspy/obspy_logo_full.svg)
+
+
+## DASCore
+
+
+::: columns
+
+
+:::{.column width="50%"}
+
+
+![](../_static/images/logo.png){width=450}
+
+:::
+
+:::{.column width="50%"}
+
+::: incremental
+- Foundation for future DASDAE codes
+- Processing routines
+- Basic, customizable visualizations
+- Read/write common data formats
+- Data set management
+:::
+
+:::
+
+
+
+
+:::
+
+
+
+
+## DASCore: Non-Goals
+</br>
+What DASCore is not:
+</br>
+
+
+::: incremental
+- Application for a particular use case
+- Graphical User Interface
+- Machine-learning library
+- Massively parallel framework
+:::
+
+
+## DASCore: Installation
+
+</br>
+</br>
+conda
+```bash
+conda install dascore -c conda-forge
+```
+
+</br>
+pip
+```bash
+pip install dascore
+```
+
+
+## DASCore: Data Structures
+
+</br>
+
+![](../_static/images/data_structure.svg)
+
+
+::: columns
+
+::: {.column width="50%"}
+
+::: {style="font-size: 1.8em; color: blue; text-align: center"}
+Patch
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {style="font-size: 1.8em; color: red; text-align: center"}
+Spool
+:::
+
+:::
+
+:::
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+
+::: {style="font-size: 1.2em;"}
+[Patch]{style="color: blue"}: Contiguous data and metadata
+:::
+
+::: incremental
+
+::: {style="font-size: 1.0em; text-align: center; presentation-line-height: 1.0"}
+- Contains three types of metadata
+    - `dims` - dimension labels
+    - `coords` - dimension values
+    - `attrs` - scalar metadata
+- Maintains metadata consistency
+- *Strives* to be immutable
+
+    
+:::
+
+:::
+
+::: footer
+Patch design inspired by [Xarray](https://docs.xarray.dev/en/stable/)
+:::
+
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* We start by importing dascore
+
+```python
+import dascore as dc
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* Then we read a DAS file
+
+```{.python code-line-numbers="3"}
+import dascore as dc
+
+patch = dc.spool('path_to_das_file.h5')[0]
+``` 
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+</br>
+
+* Or we can use one of the example patches
+
+
+```{.python code-line-numbers="3"}
+import dascore as dc
+
+patch = dc.get_example_patch("example_event_1")
+```
+
+
+```{python}
+import dascore as dc
+
+patch = dc.get_example_patch("example_event_1")
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true" .nostretch}
+</br>
+
+* Simple visualizations are accessed through .viz namespace
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch("example_event_1")
+
+patch.viz.waterfall(show=True, scale=0.1)
+```
+
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+::: {.r-stack}
+
+``` {python, echo=true}
+import matplotlib.pyplot as plt
+
+import dascore as dc
+
+import matplotlib.pyplot as plt
+plt.rcParams.update({'font.size': 17})
+
+fig, ax = plt.subplots(1, 1, figsize=(12, 6.5))
+
+patch = dc.get_example_patch("example_event_1")
+
+patch.viz.waterfall(show=True, scale=0.1, ax=ax);
+```
+
+:::
+
+:::{.footer}
+[Stanvek et al., 2022](https://www.frontiersin.org/articles/10.3389/feart.2022.907749/full)
+:::
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+* Processing methods are chained together
+
+```{.python code-line-numbers="|4-9|5|6|7|8|11"}
+import dascore as dc
+patch = dc.get_example_patch("example_event_1")
+
+patch_proc = (
+    patch.set_units("1/s", distance="m", time="s")
+    .detrend("time")
+    .taper(time=0.05)
+    .pass_filter(time=(..., 300))
+)
+
+patch_proc.viz.waterfall(show=True, scale=0.35)
+```
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+
+```{python, echo=true}
+import dascore as dc
+import matplotlib.pyplot as plt
+
+plt.rcParams.update({'font.size': 17})
+
+fig, ax = plt.subplots(1, 1, figsize=(12, 6.5))
+
+
+patch = dc.get_example_patch("example_event_1")
+
+patch_proc = (
+    patch.set_units("1/s", distance="m", time="s")
+    .detrend("time")
+    .taper(time=0.05)
+    .pass_filter(time=(..., 300))
+)
+
+patch_proc.viz.waterfall(show=True, scale=0.35, ax=ax);
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true" .smaller}
+
+<br>
+
+```{python code-line-numbers="4" echo=true}
+from rich import print
+import dascore as dc
+patch = dc.get_example_patch()
+
+print(patch)
+```
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Updating metadata
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+new = patch.update_attrs(tag='perf 2')
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Updating coordinates
+
+``` {.python code-line-numbers="4-5"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+time = '2017-09-18T10:00:01'
+new = patch.update_coords(time_min=time)
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Escape hatches: ObsPy
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+stream = patch.io.to_obspy()
+```
+
+``` {python}
+import dascore as dc
+patch = dc.get_example_patch()
+
+data_array = patch.io.to_obspy()
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Escape hatches: xarray DataArray
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+data_array = patch.io.to_xarray()
+```
+
+``` {python}
+import dascore as dc
+patch = dc.get_example_patch()
+
+data_array = patch.io.to_xarray()
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Units
+
+``` {.python code-line-numbers="4-7"}
+import dascore as dc
+patch = dc.get_example_patch()
+
+patch_units = patch.convert_units(
+  "m/s", 
+  distance="ft",
+)
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Units
+
+``` {.python code-line-numbers="6-8"}
+import dascore as dc
+from dascore.units import Hz, s
+
+patch = dc.get_example_patch()
+
+patch_filt = patch.pass_filter(
+  time=(10*Hz, 40*Hz)
+)
+```
+
+
+``` {python}
+import dascore as dc
+from dascore.units import Hz, s
+
+patch = dc.get_example_patch()
+
+patch_filt = patch.pass_filter(
+  time=(10*Hz, 40*Hz)
+)
+```
+
+
+## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
+
+</br>
+
+* Units
+
+``` {.python code-line-numbers="6-8"}
+import dascore as dc
+from dascore.units import Hz, s
+
+patch = dc.get_example_patch()
+
+patch_filt = patch.pass_filter(
+  time=(1*s, 2*s)
+)
+```
+
+
+``` {python}
+import dascore as dc
+from dascore.units import Hz, s
+
+patch = dc.get_example_patch()
+
+patch_filt = patch.pass_filter(
+  time=(1*s, 2*s)
+)
+```
+
+
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+
+::: {style="font-size: 1.2em;"}
+[Spool]{style="color: red"}: Collection of [Patches]{style="color: blue"}
+:::
+
+::: incremental
+
+::: {style="font-size: 1.0em; text-align: center; presentation-line-height: 1.0"}
+
+- Provides access to data sources
+    - In-memory (list of patches)
+    - On-disk (directory of files)
+    - Remote (cloud resources)*
+- Orchestrates batch processing
+- Operates lazily
+
+:::
+:::
+
+::: footer
+*not yet implemented
+:::
+    
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: A single file
+
+``` {.python code-line-numbers="3"}
+import dascore as dc
+
+spool = dc.spool('path_to_das_file.h5')
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: A collection of patches
+
+``` {.python code-line-numbers="3-4"}
+import dascore as dc
+
+patch_list = [dc.get_example_patch()]
+spool = dc.spool(patch_list)
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: A directory of DAS files
+
+``` {.python code-line-numbers="3"}
+import dascore as dc
+
+spool = dc.spool('das_directory').update()
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Getting a spool from: DASCore's example data set
+
+``` {.python code-line-numbers="3"}
+import dascore as dc
+
+spool = dc.get_example_spool()
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Patches are accessed via indexing
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+patch = spool[0]
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* or via iteration
+
+``` {.python code-line-numbers="4-5"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+for patch in spool:
+  ...
+```
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Sub-spools can be created with slices
+
+``` {.python code-line-numbers="4"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+sub_spool = spool[:2]
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* spools are filtered with `select`
+
+``` {.python code-line-numbers="4-7|5|6|7"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+subset_spool = spool.select(
+  tag='experiment1',
+  time=(None, '2021-01-01'),
+  distance=(10, 100)
+)
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* Data are chunked with `chunk`
+
+``` {.python code-line-numbers="4-7"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+chunked_spool = spool.chunk(
+  time=60,
+  overlap=10,
+)
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+</br>
+
+* `chunk` can also merge adjacent/overlapping data
+
+``` {.python code-line-numbers="4-6"}
+import dascore as dc
+spool = dc.get_example_spool()
+
+chunked_spool = spool.chunk(
+  time=None,
+)
+```
+
+
+## DASCore: [Spool]{style="color: red;"} {auto-animate="true"}
+
+
+* Parallel Processing
+
+``` {.python code-line-numbers="|4-5|7|8|10"}
+from concurrent.futures import ProcessPoolExecutor
+import dascore as dc
+
+def func(patch):
+    ...
+
+spool = dc.get_example_spool("random_das")
+executor = ProcessPoolExecutor()
+
+out = spool.map(func, client=executor)
+```
+
+``` {python}
+from concurrent.futures import ProcessPoolExecutor
+
+import dascore as dc
+
+def func(patch):
+    ...
+
+spool = dc.get_example_spool("random_das")
+
+executor = ProcessPoolExecutor()
+
+out = spool.map(func, client=executor)
+```
+
+
+## DASCore: Supported Formats
+
+</br>
+
+::: columns
+::: {.column width="50%"}
+- Terra15
+- TDMS
+- WAV
+- DASDAE
+- Sentek
+- Febus
+
+
+:::
+::: {.column width="50%"}
+- SEGY
+- ProdML
+- DASDAE
+- OptoDAS
+- DASHDF5
+- Pickle
+:::
+
+:::
+
+
+## DASCore: Future Work
+
+</br>
+
+::: incremental
+
+- Remote data spool
+- Additional file formats
+- More processing and transformation functions
+- Performance improvements
+- Other DASDAE packages
+
+:::
+
+
+
+## Acknowledgements 
+
+:::{style="font-size: 0.7em"}
+
+- Colorado School of Mines ITS and CIARC
+
+- NSF Geoinformatics grant 2148614
+
+- DOE STTR grant DE-SC0022478, subcontract 7026-DOE-1T/MINES with Luna Innovations
+
+- NIOSH funding for Derrick Chambers PhD studies
+
+- AFRL Acknowledgement: "This material is based on research sponsored by Air Force Research Laboratory (AFRL) under agreement number FA9453-21-2-0018. The U.S. Government is authorized to reproduce and distribute reprints for Governmental purposes notwithstanding any copyright notation thereon."
+
+- AFRL Disclaimer: "The views and conclusions contained herein are those of the authors and should not be interpreted as necessarily representing the official policies or endorsements, either expressed or implied, of Air Force Research Laboratory (AFRL) or the U.S. Government."
+
+:::
+
+## DASCore: Final Note
+
+<br>
+
+::: columns
+
+:::{.column width="50%"}
+
+::: incremental
+
+- DASCore is new, there will be:
+  - Bugs
+  - Missing features
+- DASCore can save you time
+- You can help shape its future!
+
+:::
+
+:::
+
+:::{.column width="50%"}
+
+:::{.fragment}
+
+
+![](../_static/images/dascore_qr.svg){width="400"}
+
+:::
+
+:::
+
+:::
+
+
+:::{.fragment}
+:::{.r-stack}
+[dascore.org]{style="font-size: 1.6em"}
+:::
+:::
+
