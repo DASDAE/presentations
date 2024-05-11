@@ -1,8 +1,7 @@
-# presentations
-A collection of DASDAE presentations.
+# DASDAE Resources
+
+A collection of DASDAE presentations and educational materials. 
 
 See the rendered presentations [here](https://dasdae.github.io/presentations).
 
-To add a new presentation create a new directory and build your presentation inside.
-
-Then add a link to the resulting html. See image_2022 as an example.
+See also the [DASDAE](dasdae.org) and [DASCore](dascore.org) websites.   
