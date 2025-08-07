@@ -9,7 +9,7 @@ format:
     theme: [../_static/custom.scss]
     author: DASDAE developers
     standalone: true
-    embed-resources: true
+    embed-resources: true  
 resources:
   - dascore.html
   
@@ -615,6 +615,7 @@ chunked_spool = spool.chunk(
 * Parallel Processing
 
 ``` {.python code-line-numbers="|4-5|7|8|10"}
+#| eval: false
 from concurrent.futures import ProcessPoolExecutor
 import dascore as dc
 
@@ -628,6 +629,7 @@ out = spool.map(func, client=executor)
 ```
 
 ``` {python}
+#| eval: false
 from concurrent.futures import ProcessPoolExecutor
 
 import dascore as dc
@@ -652,9 +654,10 @@ out = spool.map(func, client=executor)
 - Terra15
 - TDMS
 - WAV
-- DASDAE
 - Sentek
 - Febus
+- Neubrex
+- RSF
 
 
 :::
@@ -665,6 +668,7 @@ out = spool.map(func, client=executor)
 - OptoDAS
 - DASHDF5
 - Pickle
+- Silixa
 :::
 
 :::
