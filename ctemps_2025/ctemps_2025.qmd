@@ -122,29 +122,6 @@ Spool
 ![](../_static/images/patch_spool/patch_spool_updated.png)
 
 
-## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
-
-</br>
-
-
-::: {style="font-size: 1.2em;"}
-[Patch]{style="color: blue"}: Contiguous data and metadata
-:::
-
-::: incremental
-
-::: {style="font-size: 1.0em; text-align: center; presentation-line-height: 1.0"}
-- Contains three types of metadata
-    - `dims` - dimension labels
-    - `coords` - dimension values
-    - `attrs` - scalar metadata
-- Maintains metadata consistency
-- *Strives* to be immutable
-
-    
-:::
-
-:::
 
 ::: footer
 Patch design inspired by [Xarray](https://docs.xarray.dev/en/stable/)
@@ -170,7 +147,8 @@ import dascore as dc
 ```{.python code-line-numbers="3"}
 import dascore as dc
 
-patch = dc.spool('path_to_das_file.h5')[0]
+spool = dc.spool('path_to_das_file.h5')
+patch = spool[0]
 ``` 
 
 ## DASCore: [Patch]{style="color: blue;"} {auto-animate="true"}
@@ -614,7 +592,7 @@ chunked_spool = spool.chunk(
 
 * Parallel Processing
 
-``` {.python code-line-numbers="|4-5|7|8|10"}
+``` {.python }
 #| eval: false
 from concurrent.futures import ProcessPoolExecutor
 import dascore as dc
